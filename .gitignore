@@ -1,0 +1,15 @@
+*.class
+EclipseProject/bin/*
+EclipseProject/bin/
+/bin/
+/gen/
+#.classpath
+#.project
+
+
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
