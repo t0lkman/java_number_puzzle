@@ -3,8 +3,8 @@ EclipseProject/bin/*
 EclipseProject/bin/
 /bin/
 /gen/
-.classpath
-.project
+#.classpath
+#.project
 
 
 ## generic files to ignore
