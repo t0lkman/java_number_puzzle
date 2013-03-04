@@ -1,12 +1,12 @@
-package com.puzzle.main;
-
-
 class PuzzleController {
     private static final int ROWS = 6;
     private static final int COLS = 6;
     
     private Tile[][] _contents;  // All tiles.
     private Tile     _emptyTile; // The empty space.
+    
+    private int moves;
+    private long timeElapsed;
     
     
     //================================================= constructor
@@ -26,6 +26,8 @@ class PuzzleController {
     //======================================================= reset
     // Initialize and shuffle the tiles.
     public void reset() {
+        moves = 0;
+        setWatch();
         for (int r=0; r<ROWS; r++) {
             for (int c=0; c<COLS; c++) {
                 _contents[r][c] = new Tile(r, c, "" + (r*COLS+c+1));
@@ -54,6 +56,26 @@ class PuzzleController {
             || checkEmpty(r, c, 0, -1) || checkEmpty(r, c, 0, 1);
     }//end moveTile
     
+    //================================================== returns moves variable
+    //Returns the moves variable.
+    public int getMoves(){
+        return moves;
+    }
+
+    //================================================== sets Stop Watch at zero
+    public void setWatch(){
+        timeElapsed = System.nanoTime() - System.nanoTime();
+    }
+    
+    //================================================== returns value of the watch
+    public long getTime(){
+        return timeElapsed;
+    }
+    
+    //================================================== increments the timeElapsed variable by one
+    public void incTime(){
+        timeElapsed++;
+    }
     
     //================================================== checkEmpty
     // Check to see if there is an empty position beside tile.
@@ -65,6 +87,7 @@ class PuzzleController {
         if (isLegalRowCol(rNeighbor, cNeighbor) 
                   && _contents[rNeighbor][cNeighbor] == _emptyTile) {
             exchangeTiles(r, c, rNeighbor, cNeighbor);
+            moves++;
             return true;
         }
         return false;
