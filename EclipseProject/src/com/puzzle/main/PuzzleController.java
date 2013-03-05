@@ -1,3 +1,5 @@
+package com.puzzle.main;
+
 class PuzzleController {
     private static final int ROWS = 6;
     private static final int COLS = 6;
