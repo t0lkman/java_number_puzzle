@@ -53,7 +53,6 @@ class PuzzleGUI extends JPanel {
         medium.setActionCommand("2");
         hard.setActionCommand("3");
         easy.addActionListener(new DifficultyAction());
-        /*easy.addActionListener(new DifficultyAction());
         medium.addActionListener(new DifficultyAction());
         hard.addActionListener(new DifficultyAction());
         hard.addActionListener(new DifficultyAction());*/
@@ -176,19 +175,7 @@ class PuzzleGUI extends JPanel {
                             g.setFont(_biggerFont);
                             g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
                         }
-            for (int r=0; r<ROWS; r++) {
-                for (int c=0; c<COLS; c++) {
-                    int x = c * CELL_SIZE;
-                    int y = r * CELL_SIZE;
-                    String text = _puzzleCtrl.getFace(r, c);
-                    if (text != null) {
-                        g.setColor(Color.gray);
-                        g.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
-                        g.setColor(Color.black);
-                        g.setFont(_biggerFont);
-                        g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
-                    }
-                }
+		}
             }
         }//end paintComponent
         
@@ -243,5 +230,9 @@ class PuzzleGUI extends JPanel {
     }
     
     ////////////////////////////////////////// inner class difficuly action listener
-        
+    public class DifficultyAction implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+             diffSelection = Integer.parseInt(e.getActionCommand());
+        }
+    }
 }//end class PuzzleGUI
