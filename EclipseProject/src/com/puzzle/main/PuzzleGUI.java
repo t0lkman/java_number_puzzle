@@ -177,8 +177,8 @@ class PuzzleGUI extends JPanel {
                         }
 		}
             }
-        }//end paintComponent
-        
+        }
+    }//end paintComponent
         //======================================== listener mousePressed
         public void mousePressed(MouseEvent e) {
             //--- map x,y coordinates into a row and col.
