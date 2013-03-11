@@ -55,7 +55,7 @@ class PuzzleGUI extends JPanel {
         easy.addActionListener(new DifficultyAction());
         medium.addActionListener(new DifficultyAction());
         hard.addActionListener(new DifficultyAction());
-        hard.addActionListener(new DifficultyAction());*/
+        hard.addActionListener(new DifficultyAction());
         
         //create timer to record time elapsed till when puzzle is solved.
         timer = new Timer();
