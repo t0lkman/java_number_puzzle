@@ -24,6 +24,10 @@ class PuzzleController {
         return _contents[row][col].getFace();
     }//end getFace
     
+    // Set the face of the tile for medium difficulty
+    public void setFace(int row, int col, int face){
+        
+    }
     
     //======================================================= reset
     // Initialize and shuffle the tiles.
