@@ -7,9 +7,6 @@ import javax.swing.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JRadioButton;
-import java.util.Random;
-import javax.swing.JOptionPane;
-import java.util.Arrays;
 
 /////////////////////////////////////////////////// class PuzzleGUI
 // This class contains all the parts of the GUI interface
@@ -116,69 +113,21 @@ class PuzzleGUI extends JPanel {
         //=======================================x method paintComponent
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            //fill board for easy difficulty
-            if(diffSelection == 1 ){
-                for (int r=0; r<ROWS; r++) {
-                    for (int c=0; c<COLS; c++) {
-                        int x = c * CELL_SIZE;
-                        int y = r * CELL_SIZE;
-                        String text = _puzzleCtrl.getFace(r, c);
-                        if (text != null) {
-                            g.setColor(Color.gray);
-                            g.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
-                            g.setColor(Color.black);
-                            g.setFont(_biggerFont);
-                            g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
-                        }
+            for (int r=0; r<ROWS; r++) {
+                for (int c=0; c<COLS; c++) {
+                    int x = c * CELL_SIZE;
+                    int y = r * CELL_SIZE;
+                    String text = _puzzleCtrl.getFace(r, c);
+                    if (text != null) {
+                        g.setColor(Color.gray);
+                        g.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
+                        g.setColor(Color.black);
+                        g.setFont(_biggerFont);
+                        g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
                     }
                 }
-            }
-            //fill board for medium difficulty
-            if(diffSelection == 2){
-                int[] numbers = new int[ROWS * COLS - 1];
-                boolean check = true;
-                Random randomGenerator = new Random();
-                //method to fill board with sorted random numbers from 1 to 100, and ensure there are no duplicates
-                for(int t = 0; t < (ROWS * COLS) - 1; t++ ){
-                    int tempRandom = randomGenerator.nextInt(100) + 1;
-                    if(t > 0){
-                        do{
-                            check = true;
-                            for(int i = 0; i < numbers.length; i++){
-                                if(tempRandom == numbers[i]){
-                                    check = false;
-                                }
-                            }
-                            if(!check) {
-                                tempRandom = randomGenerator.nextInt(100) + 1;
-                            }
-                        } while(!check); 
-                    }
-                    numbers[t] = tempRandom;
-                }
-                Arrays.sort(numbers);
-                for (int r = 0; r<ROWS; r++){
-                    for (int c = 0; c<COLS; c++){
-                        int x = c * CELL_SIZE;
-                        int y = r * CELL_SIZE;
-                        String text;
-                        if((r != ROWS-1) && (c != COLS-1)){
-                            text = Integer.toString(numbers[r*ROWS + c]);
-                        }
-                        else {
-                            text = _puzzleCtrl.getFace(r, c);
-                        }
-                        if( text != null ){
-                            g.setColor(Color.gray);
-                            g.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
-                            g.setColor(Color.black);
-                            g.setFont(_biggerFont);
-                            g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
-                        }
-		}
-            }
+            }//end paintComponent
         }
-    }//end paintComponent
         //======================================== listener mousePressed
         public void mousePressed(MouseEvent e) {
             //--- map x,y coordinates into a row and col.
@@ -215,7 +164,7 @@ class PuzzleGUI extends JPanel {
     ////////////////////////////////////////// inner class NewGameAction
     public class NewGameAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            _puzzleCtrl.reset();
+            _puzzleCtrl.reset(diffSelection);
             //reset move counter
             moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
             _puzzleGraphics.repaint();
@@ -225,14 +174,14 @@ class PuzzleGUI extends JPanel {
     ////////////////////////////////////////// inner class game size action listener
     public class SizeAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-                sizeSelection = Integer.parseInt(e.getActionCommand());
+            sizeSelection = Integer.parseInt(e.getActionCommand());
         }
     }
     
     ////////////////////////////////////////// inner class difficuly action listener
     public class DifficultyAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-             diffSelection = Integer.parseInt(e.getActionCommand());
+            diffSelection = Integer.parseInt(e.getActionCommand());
         }
     }
 }//end class PuzzleGUI

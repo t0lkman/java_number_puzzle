@@ -1,5 +1,8 @@
 package com.puzzle.main;
 
+import java.util.Arrays;
+import java.util.Random;
+
 class PuzzleController {
     private static final int ROWS = 6;
     private static final int COLS = 6;
@@ -14,7 +17,7 @@ class PuzzleController {
     //================================================= constructor
     public PuzzleController() {
         _contents = new Tile[ROWS][COLS];
-        reset();               // Initialize and shuffle tiles.
+        reset(1);               // Initialize and shuffle tiles.
     }//end constructor
     
     
@@ -31,12 +34,43 @@ class PuzzleController {
     
     //======================================================= reset
     // Initialize and shuffle the tiles.
-    public void reset() {
+    public void reset(int d) {
         moves = 0;
         setWatch();
-        for (int r=0; r<ROWS; r++) {
-            for (int c=0; c<COLS; c++) {
-                _contents[r][c] = new Tile(r, c, "" + (r*COLS+c+1));
+        //easy arrangement
+        if(d == 1){
+            for (int r=0; r<ROWS; r++) {
+                for (int c=0; c<COLS; c++) {
+                    _contents[r][c] = new Tile(r, c, "" + (r*COLS+c+1));
+                }
+            }
+        }
+        //medium arrangement
+        if(d == 2){
+            int[] numbers = new int[ROWS * COLS - 1];
+            boolean check = true;
+            Random randomGenerator = new Random();
+            //method to fill board with sorted random numbers from 1 to 100, and ensure there are no duplicates
+            for(int t = 0; t < (ROWS * COLS) - 1; t++ ){
+                int tempRandom = randomGenerator.nextInt(100) + 1;
+                if(t > 0){
+                    do{
+                        check = true;
+                        for(int i = 0; i < numbers.length; i++){
+                            if(tempRandom == numbers[i]){
+                                check = false;
+                            }
+                        }
+                        if(!check) {
+                            tempRandom = randomGenerator.nextInt(100) + 1;
+                        }
+                    } while(!check); 
+                }
+                numbers[t] = tempRandom;
+            }
+            Arrays.sort(numbers);
+            for(int t = 0; t < numbers.length; t++){
+                _contents[t/ROWS][t%COLS] = new Tile(t/ROWS, t%COLS, "" + numbers[t]);
             }
         }
         //--- Set last tile face to null to mark empty space
