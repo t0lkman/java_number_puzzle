@@ -13,7 +13,7 @@ import javax.swing.JRadioButton;
 class PuzzleGUI extends JPanel {
     //=============================================== instance variables
     private GraphicsPanel    _puzzleGraphics;
-    private PuzzleController _puzzleCtrl = new PuzzleController();
+    private PuzzleController _puzzleCtrl = new PuzzleController(6, 1);
     private JLabel moveLabel;
     private JLabel timerLabel;
     private Timer timer;
@@ -89,7 +89,7 @@ class PuzzleGUI extends JPanel {
         this.add(_puzzleGraphics, BorderLayout.CENTER);
     }//end constructor
 
-
+   
     //////////////////////////////////////////////// class GraphicsPanel
     // This is defined inside the outer class so that
     // it can use the outer class instance variables.
@@ -110,6 +110,13 @@ class PuzzleGUI extends JPanel {
             this.addMouseListener(this);  // Listen own mouse events.
         }//end constructor
         
+        //=======================================  method to set dimensions
+        private void setSize(int size){
+            ROWS = size;
+            COLS = size;
+            CELL_SIZE = 480/size;
+        }
+        
         //=======================================x method paintComponent
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -123,7 +130,12 @@ class PuzzleGUI extends JPanel {
                         g.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
                         g.setColor(Color.black);
                         g.setFont(_biggerFont);
-                        g.drawString(text, x+20, y+(3*CELL_SIZE)/4);
+                        if(Integer.parseInt(text) == 100 ){
+                            g.drawString(text, x+(CELL_SIZE/4)-10, y+(3*CELL_SIZE)/4);
+                        }
+                        else {
+                            g.drawString(text, x+(CELL_SIZE/4), y+(3*CELL_SIZE)/4);
+                        }
                     }
                 }
             }//end paintComponent
@@ -164,7 +176,8 @@ class PuzzleGUI extends JPanel {
     ////////////////////////////////////////// inner class NewGameAction
     public class NewGameAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            _puzzleCtrl.reset(diffSelection);
+            _puzzleGraphics.setSize(sizeSelection);
+            _puzzleCtrl = new PuzzleController(sizeSelection, diffSelection);
             //reset move counter
             moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
             _puzzleGraphics.repaint();

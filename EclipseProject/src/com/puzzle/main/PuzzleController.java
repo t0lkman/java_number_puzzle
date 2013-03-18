@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 class PuzzleController {
-    private static final int ROWS = 6;
-    private static final int COLS = 6;
+    private int ROWS;
+    private int COLS;
     
     private Tile[][] _contents;  // All tiles.
     private Tile     _emptyTile; // The empty space.
@@ -15,9 +15,11 @@ class PuzzleController {
     
     
     //================================================= constructor
-    public PuzzleController() {
+    public PuzzleController(int dimen, int diff) {
+        ROWS = dimen;
+        COLS = dimen;
         _contents = new Tile[ROWS][COLS];
-        reset(1);               // Initialize and shuffle tiles.
+        reset(diff);               // Initialize and shuffle tiles.
     }//end constructor
     
     
@@ -26,11 +28,7 @@ class PuzzleController {
     String getFace(int row, int col) {
         return _contents[row][col].getFace();
     }//end getFace
-    
-    // Set the face of the tile for medium difficulty
-    public void setFace(int row, int col, int face){
-        
-    }
+   
     
     //======================================================= reset
     // Initialize and shuffle the tiles.
@@ -74,6 +72,7 @@ class PuzzleController {
             }
         }
         //--- Set last tile face to null to mark empty space
+        _contents[ROWS-1][COLS-1] = new Tile(ROWS-1, COLS-1, "" + 0);
         _emptyTile = _contents[ROWS-1][COLS-1];
         _emptyTile.setFace(null);
         
