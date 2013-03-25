@@ -36,7 +36,7 @@ class PuzzleController {
         moves = 0;
         setWatch();
         //easy arrangement
-        if(d == 1){
+        if(d == 1 || d==3){
             for (int r=0; r<ROWS; r++) {
                 for (int c=0; c<COLS; c++) {
                     _contents[r][c] = new Tile(r, c, "" + (r*COLS+c+1));
@@ -44,7 +44,7 @@ class PuzzleController {
             }
         }
         //medium arrangement
-        if(d == 2){
+        else if(d == 2){
             int[] numbers = new int[ROWS * COLS - 1];
             boolean check = true;
             Random randomGenerator = new Random();
