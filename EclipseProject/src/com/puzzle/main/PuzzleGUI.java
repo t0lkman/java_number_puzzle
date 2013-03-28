@@ -129,9 +129,12 @@ class PuzzleGUI extends JPanel {
 		    String text = _puzzleCtrl.getFace(r, c);
 		    if (text != null) {
 			if (diffSelection != 3) {
-			    g.setColor(Color.gray);
-			    g.fillRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
-			    g.setColor(Color.black);
+				//g.setColor(Color.gray);
+				g.setColor(new Color(230,230,250));
+				//g.fillRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+				g.fill3DRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4, true);
+				//g.setColor(Color.black);
+				g.setColor(new Color(178,34,34));
 			    g.setFont(_biggerFont);
 			    if (Integer.parseInt(text) == 100) {
 				g.drawString(text, x + (CELL_SIZE / 4) - 10, y + (3 * CELL_SIZE) / 4);
