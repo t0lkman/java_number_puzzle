@@ -21,7 +21,16 @@ class PuzzleGUI extends JPanel {
     private PuzzleController _puzzleCtrl = new PuzzleController(6, 1);
     private JLabel moveLabel;
     private JLabel timerLabel;
+    private JPanel picturePanel = new JPanel();
+    private JPanel emptyPanel = new JPanel();
     private Timer timer;
+    private JPanel controlPanel = new JPanel();
+    private JPanel sizePanel = new JPanel();
+    private JPanel difficultyPanel = new JPanel();
+    private JPanel emptyPanel2 = new JPanel();
+    private JLabel gameTypeLabel = new JLabel("Select Game Type");
+    private JButton newGameButton = new JButton("New Game");
+    private JButton startButton = new JButton("Start Game");
     private int sizeSelection = 3;
     private int diffSelection = 1; // 1 = Easy, 2 = Medium, 3 = Hard
 
@@ -30,8 +39,10 @@ class PuzzleGUI extends JPanel {
     // ====================================================== constructor
     public PuzzleGUI() {
 	// --- Create buttons. Add listeners to them.
-	JButton newGameButton = new JButton("New Game");
-	newGameButton.addActionListener(new NewGameAction());
+	
+        newGameButton.addActionListener(new NewGameAction());
+        startButton.addActionListener(new StartButtonAction());
+        
 	JRadioButton _3x3 = new JRadioButton("3 x 3", true);
 	JRadioButton _4x4 = new JRadioButton("4 x 4", false);
 	JRadioButton _5x5 = new JRadioButton("5 x 5", false);
@@ -59,29 +70,87 @@ class PuzzleGUI extends JPanel {
 	medium.addActionListener(new DifficultyAction());
 	hard.addActionListener(new DifficultyAction());
 	hard.addActionListener(new DifficultyAction());
-
+        JRadioButton ocean = new JRadioButton("Ocean", true);
+        JRadioButton dogs = new JRadioButton("Dogs", false);
+        JRadioButton cars = new JRadioButton("Cars", false);
+        JRadioButton space = new JRadioButton("Space", false);
+        ButtonGroup pictureGroup = new ButtonGroup();
+        pictureGroup.add(ocean);
+        pictureGroup.add(dogs);
+        pictureGroup.add(cars);
+        pictureGroup.add(space);
+        ocean.setActionCommand("1");
+        dogs.setActionCommand("2");
+        cars.setActionCommand("3");
+        space.setActionCommand("4");
+        
 	// create timer to record time elapsed till when puzzle is solved.
 	timer = new Timer();
 
 	// --- Create control panel
-	JPanel controlPanel = new JPanel();
-	JPanel sizePanel = new JPanel();
-	JPanel difficultyPanel = new JPanel();
+	
 
 	controlPanel.setLayout(new FlowLayout());
 	controlPanel.add(newGameButton);
-	sizePanel.setLayout(new GridLayout(3, 1));
-	difficultyPanel.setLayout(new GridLayout());
+        
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 100;
+        c.ipady = 20;
+        c.insets = new Insets(0, 260, 0, 0);
+        c.gridwidth = 3;
+        this.add(gameTypeLabel, c);
+        c.insets = new Insets(0, 150, 0, 0);
+        c.gridwidth = 1;
+        this.add(newGameButton, c);
+        newGameButton.setVisible(false);
+        
+        c.insets = new Insets(0, 50, 0, 0);
+        c.ipady = 0;
+	sizePanel.setLayout(new GridLayout(3,1));
 	sizePanel.add(_3x3);
 	sizePanel.add(_4x4);
 	sizePanel.add(_5x5);
-	controlPanel.add(sizePanel);
-	difficultyPanel.setLayout(new GridLayout(3, 1));
-	difficultyPanel.add(easy);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+	this.add(sizePanel, c);
+        
+        c.insets = new Insets(0, 100, 0, 0);
+        c.gridx = 1;
+        difficultyPanel.setLayout(new GridLayout(3, 1));
+        difficultyPanel.add(easy);
 	difficultyPanel.add(medium);
 	difficultyPanel.add(hard);
-	controlPanel.add(difficultyPanel);
-
+        this.add(difficultyPanel, c);     
+        
+        c.gridx = 2;
+        this.add(emptyPanel, c);
+        
+        c.insets = new Insets(0, 50, 0, 0);
+        c.gridx = 2;
+        picturePanel.setLayout(new GridLayout(4,1));
+        picturePanel.add(ocean);
+        picturePanel.add(cars);
+        picturePanel.add(dogs);
+        picturePanel.add(space);
+        this.add(picturePanel, c);
+        picturePanel.setVisible(false);
+        
+        c.gridx = 1;
+        c.gridy = 3;
+        c.ipady = 20;
+        c.ipadx = 0;
+        this.add(emptyPanel2, c);
+        c.gridy = 4;
+        c.gridheight = 2;
+        c.insets = new Insets(0, 0, 0, 0);
+        this.add(startButton, c);
+        
 	moveLabel = new JLabel("Moves:  " + _puzzleCtrl.getMoves());
 	timerLabel = new JLabel("Elapsed Time:  " + _puzzleCtrl.getTime());
 	timer.schedule(new UpdateTime(), 0, 1000);
@@ -89,9 +158,15 @@ class PuzzleGUI extends JPanel {
 	_puzzleGraphics = new GraphicsPanel();
 
 	// --- Set the layout and add the components
-	this.setLayout(new BorderLayout());
-	this.add(controlPanel, BorderLayout.NORTH);
-	this.add(_puzzleGraphics, BorderLayout.CENTER);
+	c.gridx = 0;
+        c.gridy = 3;
+        c.gridheight = 5;
+        c.gridwidth = 2;
+        c.insets = new Insets(0,0,0,0);
+        c.ipady = 0;
+	//this.add(controlPanel, BorderLayout.NORTH);
+	this.add(_puzzleGraphics, c);
+        _puzzleGraphics.setVisible(false);
     }// end constructor
 
     // ////////////////////////////////////////////// class GraphicsPanel
@@ -200,14 +275,33 @@ class PuzzleGUI extends JPanel {
     // //////////////////////////////////////// inner class NewGameAction
     public class NewGameAction implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
-	    _puzzleGraphics.setSize(sizeSelection);
-	    _puzzleCtrl = new PuzzleController(sizeSelection, diffSelection);
-	    // reset move counter
-	    moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
-	    _puzzleGraphics.repaint();
+	    gameTypeLabel.setVisible(true);
+            sizePanel.setVisible(true);
+            difficultyPanel.setVisible(true);
+            startButton.setVisible(true);
+            newGameButton.setVisible(false);
+            emptyPanel2.setVisible(true);
+            _puzzleGraphics.setVisible(false);
 	}
     }// end inner class NewGameAction
 
+    ///////////////////////////////////////////  inner class StartButtonAction
+    public class StartButtonAction implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            gameTypeLabel.setVisible(false);
+            sizePanel.setVisible(false);
+            difficultyPanel.setVisible(false);
+            startButton.setVisible(false);
+            newGameButton.setVisible(true);
+            picturePanel.setVisible(false);
+            emptyPanel2.setVisible(false);
+            _puzzleGraphics.setVisible(true);
+            _puzzleGraphics.setSize(sizeSelection);
+            _puzzleCtrl = new PuzzleController(sizeSelection, diffSelection);
+            moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
+            _puzzleGraphics.repaint();
+        }
+    }
     // //////////////////////////////////////// inner class game size action
     // listener
     public class SizeAction implements ActionListener {
@@ -221,6 +315,14 @@ class PuzzleGUI extends JPanel {
     public class DifficultyAction implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 	    diffSelection = Integer.parseInt(e.getActionCommand());
+            if(diffSelection == 3) {
+                emptyPanel.setVisible(false);
+                picturePanel.setVisible(true);
+            }
+            else {
+                picturePanel.setVisible(false);
+                emptyPanel.setVisible(true);
+            }
 	}
     }
 }// end class PuzzleGUI
