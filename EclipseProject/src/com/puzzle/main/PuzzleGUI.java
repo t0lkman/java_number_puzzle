@@ -246,6 +246,18 @@ class PuzzleGUI extends JPanel {
 	    // increments the label when a valid move is made
 	    moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
 	    this.repaint(); // Show any updates to model.
+            if(_puzzleCtrl.isGameOver()) {
+                int reply = JOptionPane.showConfirmDialog(null, "Congratulations you have won.", "CONGRATULATIONS!!!", JOptionPane.OK_OPTION);
+                if( reply == JOptionPane.OK_OPTION){
+                    gameTypeLabel.setVisible(true);
+                    sizePanel.setVisible(true);
+                    difficultyPanel.setVisible(true);
+                    startButton.setVisible(true);
+                    newGameButton.setVisible(false);
+                    emptyPanel2.setVisible(true);
+                    _puzzleGraphics.setVisible(false);
+                }
+            };
 	}// end mousePressed
 
 	// ========================================== ignore these events
@@ -285,7 +297,6 @@ class PuzzleGUI extends JPanel {
 	}
     }// end inner class NewGameAction
 
-    ///////////////////////////////////////////  inner class StartButtonAction
     public class StartButtonAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             gameTypeLabel.setVisible(false);

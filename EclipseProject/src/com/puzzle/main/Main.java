@@ -8,6 +8,7 @@ class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setContentPane(new PuzzleGUI());
         window.pack();
+	window.setSize(800,600);
         window.setVisible(true);
         window.setLocationRelativeTo(null);
         window.setResizable(false);
