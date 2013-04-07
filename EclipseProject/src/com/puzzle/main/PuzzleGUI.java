@@ -257,7 +257,7 @@ class PuzzleGUI extends JPanel {
                     emptyPanel2.setVisible(true);
                     _puzzleGraphics.setVisible(false);
                 }
-            };
+            }
 	}// end mousePressed
 
 	// ========================================== ignore these events

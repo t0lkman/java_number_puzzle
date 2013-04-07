@@ -150,16 +150,17 @@ class PuzzleController {
         
     
     //=================================================== isGameOver
-    public boolean isGameOver() {
-        for (int r=0; r<ROWS; r++) {
-            for (int c=0; c<ROWS; c++) {
+    public boolean isGameOver() { 
+       for(int r = 0; r < ROWS; r++){
+           for(int c = 0; c< COLS; c++){
                 Tile trc = _contents[r][c];
-                return trc.isInFinalPosition(r, c);
-            }
-        }
-        
+                if( r != trc.getRow()) return false;
+                if( c != trc.getCol()) return false;
+           }
+       } 
+      
         //--- Falling thru loop means nothing out of place.
-        return true;
+       return true;
     }//end isGameOver
 }//end class PuzzleController
     
@@ -199,4 +200,14 @@ class Tile {
     public boolean isInFinalPosition(int r, int c) {
         return r==_row && c==_col;
     }//end isInFinalPosition
+    
+    //=============================================== returns intended final row
+    public int getRow(){
+        return _row;
+    }
+    
+    //=============================================== returns intended final col
+    public int getCol(){
+        return _col;
+    }
 }//end class Tile
