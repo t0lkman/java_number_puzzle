@@ -21,10 +21,11 @@ class PuzzleGUI extends JPanel {
     private PuzzleController _puzzleCtrl = new PuzzleController(6, 1);
     private JLabel moveLabel;
     private JLabel timerLabel;
+    private JLabel timeRemainLabel;
     private JPanel picturePanel = new JPanel();
     private JPanel emptyPanel = new JPanel();
+    private JPanel timerPanel = new JPanel();
     private Timer timer;
-    private JPanel controlPanel = new JPanel();
     private JPanel sizePanel = new JPanel();
     private JPanel difficultyPanel = new JPanel();
     private JPanel emptyPanel2 = new JPanel();
@@ -33,6 +34,9 @@ class PuzzleGUI extends JPanel {
     private JButton startButton = new JButton("Start Game");
     private int sizeSelection = 3;
     private int diffSelection = 1; // 1 = Easy, 2 = Medium, 3 = Hard
+    private int timeRemain = 7200;
+    private long finalTime = 0;
+    private boolean active = true;
 
     // end instance variables
 
@@ -88,10 +92,14 @@ class PuzzleGUI extends JPanel {
 	timer = new Timer();
 
 	// --- Create control panel
-	
-
-	controlPanel.setLayout(new FlowLayout());
-	controlPanel.add(newGameButton);
+	moveLabel = new JLabel("Moves:  " + _puzzleCtrl.getMoves());
+	timerLabel = new JLabel("Elapsed Time:  ");
+        timeRemainLabel = new JLabel("Time Remaining:");
+	timer.schedule(new UpdateTime(), 0, 1000); 
+        timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.Y_AXIS));
+        timerPanel.add(timerLabel);
+        timerPanel.add(timeRemainLabel);
+        timerPanel.add(moveLabel);
         
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -99,18 +107,26 @@ class PuzzleGUI extends JPanel {
         
         c.gridx = 0;
         c.gridy = 0;
+        c.ipadx = 0;
+        c.ipady = 0;
+        this.add(timerPanel);
+        timerPanel.setVisible(false);
         c.ipadx = 100;
         c.ipady = 20;
         c.insets = new Insets(0, 260, 0, 0);
         c.gridwidth = 3;
         this.add(gameTypeLabel, c);
         c.insets = new Insets(0, 150, 0, 0);
+        c.ipadx = 0;
+        c.ipady = 0;
         c.gridwidth = 1;
+        c.gridx = 1;
         this.add(newGameButton, c);
         newGameButton.setVisible(false);
         
-        c.insets = new Insets(0, 50, 0, 0);
+        c.ipadx = 100;
         c.ipady = 0;
+        c.insets = new Insets(0, 50, 0, 0);
 	sizePanel.setLayout(new GridLayout(3,1));
 	sizePanel.add(_3x3);
 	sizePanel.add(_4x4);
@@ -151,9 +167,7 @@ class PuzzleGUI extends JPanel {
         c.insets = new Insets(0, 0, 0, 0);
         this.add(startButton, c);
         
-	moveLabel = new JLabel("Moves:  " + _puzzleCtrl.getMoves());
-	timerLabel = new JLabel("Elapsed Time:  " + _puzzleCtrl.getTime());
-	timer.schedule(new UpdateTime(), 0, 1000);
+	
 	// --- Create graphics panel
 	_puzzleGraphics = new GraphicsPanel();
 
@@ -162,7 +176,7 @@ class PuzzleGUI extends JPanel {
         c.gridy = 3;
         c.gridheight = 5;
         c.gridwidth = 2;
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0,50,0,0);
         c.ipady = 0;
 	//this.add(controlPanel, BorderLayout.NORTH);
 	this.add(_puzzleGraphics, c);
@@ -247,7 +261,27 @@ class PuzzleGUI extends JPanel {
 	    moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
 	    this.repaint(); // Show any updates to model.
             if(_puzzleCtrl.isGameOver()) {
-                int reply = JOptionPane.showConfirmDialog(null, "Congratulations you have won.", "CONGRATULATIONS!!!", JOptionPane.OK_OPTION);
+                finalTime = _puzzleCtrl.getTime();
+                long totalTime = _puzzleCtrl.getTime();
+                long totalRemain = timeRemain - _puzzleCtrl.getTime();
+                long minutes = totalTime / 60;
+                long seconds = totalTime % 60;
+                String message = "Congratulations you have won.\nYou used " + _puzzleCtrl.getMoves() + " moves.";
+                if( minutes > 60 ) {
+                    message = message + "\nYou used a total of " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.";
+                }
+                else {
+                    message = message + "\nYou used a total of " + minutes + " minutes, " + seconds + " seconds.";
+                }
+                minutes = totalRemain / 60;
+                seconds = totalRemain % 60;
+                if( minutes > 60 ) {
+                    message = message + "\nYou had " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds remaining.";
+                }
+                else {
+                    message = message + "\nYou had " + minutes + " minutes, " + seconds + " seconds remaining.";
+                }
+                int reply = JOptionPane.showConfirmDialog(null, message, "CONGRATULATIONS!!!", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null);
                 if( reply == JOptionPane.OK_OPTION){
                     gameTypeLabel.setVisible(true);
                     sizePanel.setVisible(true);
@@ -256,6 +290,7 @@ class PuzzleGUI extends JPanel {
                     newGameButton.setVisible(false);
                     emptyPanel2.setVisible(true);
                     _puzzleGraphics.setVisible(false);
+                    timerPanel.setVisible(false);
                 }
             }
 	}// end mousePressed
@@ -278,9 +313,38 @@ class PuzzleGUI extends JPanel {
 	public void run() {
 	    _puzzleCtrl.incTime();
 	    long totalTime = _puzzleCtrl.getTime();
+            long totalRemain = timeRemain - _puzzleCtrl.getTime();
 	    long minutes = totalTime / 60;
 	    long seconds = totalTime % 60;
-	    timerLabel.setText("Elapsed Time:  " + minutes + " minutes, " + seconds + " seconds.");
+            if( minutes == 3  && active) {
+                int reply = JOptionPane.showConfirmDialog(null, "You did not complete the puzzle within the specified time limit.", 
+                        "YOU HAVE LOST.", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null);
+                if( reply == JOptionPane.OK_OPTION){
+                    gameTypeLabel.setVisible(true);
+                    sizePanel.setVisible(true);
+                    difficultyPanel.setVisible(true);
+                    startButton.setVisible(true);
+                    newGameButton.setVisible(false);
+                    emptyPanel2.setVisible(true);
+                    _puzzleGraphics.setVisible(false);
+                    timerPanel.setVisible(false);
+                    active = false;
+                }
+            }
+            if( minutes > 60 ) {
+                timerLabel.setText("Elapsed Time:  " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.");
+            }
+            else {
+                timerLabel.setText("Elapsed Time: " + minutes + " minutes, " + seconds + " seconds.");
+            }
+            minutes = totalRemain / 60;
+            seconds = totalRemain % 60;
+            if( minutes > 60 ) {
+                timeRemainLabel.setText("Time Left:  " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.");
+            }
+            else {
+                timeRemainLabel.setText("Time Left:  " + minutes + " minutes, " + seconds + " seconds.");
+            }
 	}
     }
 
@@ -294,6 +358,7 @@ class PuzzleGUI extends JPanel {
             newGameButton.setVisible(false);
             emptyPanel2.setVisible(true);
             _puzzleGraphics.setVisible(false);
+            timerPanel.setVisible(false);
 	}
     }// end inner class NewGameAction
 
@@ -309,8 +374,12 @@ class PuzzleGUI extends JPanel {
             _puzzleGraphics.setVisible(true);
             _puzzleGraphics.setSize(sizeSelection);
             _puzzleCtrl = new PuzzleController(sizeSelection, diffSelection);
+            _puzzleCtrl.setWatch();
             moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
+            timerLabel.setText("Elapsed Time:  " + _puzzleCtrl.getTime());
+            timerPanel.setVisible(true);
             _puzzleGraphics.repaint();
+            active = true;
         }
     }
     // //////////////////////////////////////// inner class game size action

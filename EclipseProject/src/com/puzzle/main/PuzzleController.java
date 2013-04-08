@@ -103,7 +103,7 @@ class PuzzleController {
 
     //================================================== sets Stop Watch at zero
     public void setWatch(){
-        timeElapsed = System.nanoTime() - System.nanoTime();
+        timeElapsed = 0;
     }
     
     //================================================== returns value of the watch
