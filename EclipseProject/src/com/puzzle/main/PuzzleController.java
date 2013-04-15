@@ -35,22 +35,22 @@ class PuzzleController {
     public void reset(int d) {
         moves = 0;
         setWatch();
-        //easy arrangement
-        if(d == 1 || d==3){
+        //images arrangement
+        if(d == 2){
             for (int r=0; r<ROWS; r++) {
                 for (int c=0; c<COLS; c++) {
-                    _contents[r][c] = new Tile(r, c, "" + (r*COLS+c+1));
+                    _contents[r][c] = new Tile(r, c, "" + (r*COLS+c));
                 }
             }
         }
-        //medium arrangement
-        else if(d == 2){
+        //numbers arrangement
+        else if(d == 1){
             int[] numbers = new int[ROWS * COLS - 1];
             boolean check = true;
             Random randomGenerator = new Random();
-            //method to fill board with sorted random numbers from 1 to 100, and ensure there are no duplicates
+            //method to fill board with sorted random numbers from 1 to 99, and ensure there are no duplicates
             for(int t = 0; t < (ROWS * COLS) - 1; t++ ){
-                int tempRandom = randomGenerator.nextInt(100) + 1;
+                int tempRandom = randomGenerator.nextInt(99) + 1;
                 if(t > 0){
                     do{
                         check = true;
@@ -60,7 +60,7 @@ class PuzzleController {
                             }
                         }
                         if(!check) {
-                            tempRandom = randomGenerator.nextInt(100) + 1;
+                            tempRandom = randomGenerator.nextInt(99) + 1;
                         }
                     } while(!check); 
                 }
