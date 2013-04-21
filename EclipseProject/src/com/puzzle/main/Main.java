@@ -9,7 +9,7 @@ class Main {
 	window = new JFrame("Numbers Puzzle");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setContentPane(new PuzzleGUI());
-        Main.setWindowSize(400,400);
+        Main.setWindowSize(600,600);
         window.setVisible(true);
         window.setResizable(false);
     }

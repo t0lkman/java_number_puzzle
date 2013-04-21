@@ -4,7 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,9 +24,9 @@ class PuzzleGUI extends JPanel {
     private PuzzleController _puzzleCtrl = new PuzzleController(6, 1);
     private JLabel moveLabel;
     private JLabel timerLabel;
-    private JLabel timeRemainLabel;
     private JPanel picturePanel = new JPanel();
     private JPanel timerPanel = new JPanel();
+    private JPanel scorePanel = new JPanel();
     private Timer timer;
     private JPanel sizePanel = new JPanel();
     private JPanel difficultyPanel = new JPanel();
@@ -36,14 +39,12 @@ class PuzzleGUI extends JPanel {
     private int sizeSelection = 3;
     private int typSelection = 1; // 1 = Numbers, 2 = Images
     private int imageTypeSelection = 1; // 1 = dogs, 2 = architectures, 3 = cars, 4 = cartoon
-    private int timeRemain = 7200;
     private long finalTime = 0;
-    private boolean active = true;
     private JRadioButton dogs = new JRadioButton("Dogs", true);
     private JRadioButton architectures = new JRadioButton("Architecture", false);
     private JRadioButton cars = new JRadioButton("Cars", false);
     private JRadioButton cartoon = new JRadioButton("Cartoon", false);
-
+    private BufferedReader input;
     // end instance variables
 
     // ====================================================== constructor
@@ -99,11 +100,9 @@ class PuzzleGUI extends JPanel {
 	// --- Create control panel
 	moveLabel = new JLabel("Moves:  " + _puzzleCtrl.getMoves());
 	timerLabel = new JLabel("Elapsed Time: 00:00");
-      //  timeRemainLabel = new JLabel("Time Remaining:");
 	timer.schedule(new UpdateTime(), 0, 1000); 
         timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.Y_AXIS));
         timerPanel.add(timerLabel);
-        //timerPanel.add(timeRemainLabel); Why do we need to show it?
         timerPanel.add(moveLabel);
         
         this.setLayout(new GridBagLayout());
@@ -115,8 +114,10 @@ class PuzzleGUI extends JPanel {
         
         c.ipadx = 0;
         c.ipady = 0;
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 0;
+        c.insets = new Insets(0, 226, 25, 0);
+        c.gridwidth = 3;
         gameTypeLabel.setFont(new Font(gameTypeLabel.getFont().getName(),Font.BOLD,gameTypeLabel.getFont().getSize()));
         this.add(gameTypeLabel, c);
         
@@ -139,9 +140,10 @@ class PuzzleGUI extends JPanel {
         showFinalImage.setVisible(false);
         
         
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(0, 75, 0, 0);
         c.gridx = 0;
         c.gridy = 3;
+        c.ipadx = 100;
         difficultyPanel.setLayout(new GridLayout(3, 1));
         difficultyPanel.add(numbers);
 	difficultyPanel.add(images);
@@ -157,8 +159,6 @@ class PuzzleGUI extends JPanel {
         c.gridwidth = 1;
 	this.add(sizePanel, c);
         
-
-        
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 2;
         picturePanel.setLayout(new GridLayout(4,1));
@@ -169,20 +169,20 @@ class PuzzleGUI extends JPanel {
         this.add(picturePanel, c);
         picturePanel.setVisible(true);
         
-        c.gridx = 1;
-        c.gridy = 3;
+        c.gridx = 0;
         c.ipady = 20;
         c.ipadx = 0;
-        this.add(emptyPanel2, c);
+        c.gridheight = 1;
         c.gridy = 4;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(25, 230, 0, 100);
+        c.gridwidth = 2;
         this.add(startButton, c);
         
-	
 	// --- Create graphics panel
 	_puzzleGraphics = new GraphicsPanel();
 
 	// --- Set the layout and add the components
+        c.insets = new Insets(0, 0, 0, 0);
 	c.gridx = 0;
         c.gridy = 4;
         c.gridheight = 0;
@@ -191,6 +191,22 @@ class PuzzleGUI extends JPanel {
 	//this.add(controlPanel, BorderLayout.NORTH);
 	this.add(_puzzleGraphics, c);
         _puzzleGraphics.setVisible(false);
+        
+        try{
+            input = new BufferedReader(new FileReader("Scores.txt"));
+            
+        }
+        catch(FileNotFoundException ex){
+            
+        }
+        
+        JLabel scoreLabel = new JLabel ("Hello World");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(0, 0, 0, 0);
+        scorePanel.add(scoreLabel);
+        this.add(scorePanel);
+        
     }// end constructor
 
     // ////////////////////////////////////////////// class GraphicsPanel
@@ -346,7 +362,6 @@ class PuzzleGUI extends JPanel {
             if(_puzzleCtrl.isGameOver()) {
                 finalTime = _puzzleCtrl.getTime();
                 long totalTime = _puzzleCtrl.getTime();
-                long totalRemain = timeRemain - _puzzleCtrl.getTime();
                 long minutes = totalTime / 60;
                 long seconds = totalTime % 60;
                 String message = "Congratulations you have won.\nYou used " + _puzzleCtrl.getMoves() + " moves.";
@@ -356,20 +371,12 @@ class PuzzleGUI extends JPanel {
                 else {
                     message = message + "\nYou used a total of " + minutes + " minutes, " + seconds + " seconds.";
                 }
-                minutes = totalRemain / 60;
-                seconds = totalRemain % 60;
-                if( minutes > 60 ) {
-                    message = message + "\nYou had " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds remaining.";
-                }
-                else {
-                    message = message + "\nYou had " + minutes + " minutes, " + seconds + " seconds remaining.";
-                }
                 int reply = JOptionPane.showConfirmDialog(null, message, "CONGRATULATIONS!!!", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null);
                 if( reply == JOptionPane.OK_OPTION){
                     // The code bellow repeated like 4 times, maybe move to its own method?
         	    showFlag = false;
         	    showFinalImage.setText("Show Final Image");
-        	    Main.setWindowSize(400,400);
+        	    Main.setWindowSize(600,600);
         	    gameTypeLabel.setVisible(true);
                     sizePanel.setVisible(true);
                     difficultyPanel.setVisible(true);
@@ -403,38 +410,9 @@ class PuzzleGUI extends JPanel {
 	public void run() {
 	    _puzzleCtrl.incTime();
 	    long totalTime = _puzzleCtrl.getTime();
-            long totalRemain = timeRemain - _puzzleCtrl.getTime();
 	    int minutes = (int) (totalTime / 60);
 	    int seconds = (int) (totalTime % 60);
-            if( minutes == 3  && active) {
-                int reply = JOptionPane.showConfirmDialog(null, "You did not complete the puzzle within the specified time limit.", 
-                        "YOU HAVE LOST.", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null);
-                if( reply == JOptionPane.OK_OPTION){
-        	    showFlag = false;
-        	    showFinalImage.setText("Show Final Image");
-        	    Main.setWindowSize(400,400);
-        	    gameTypeLabel.setVisible(true);
-                    sizePanel.setVisible(true);
-                    difficultyPanel.setVisible(true);
-                    startButton.setVisible(true);
-                    picturePanel.setVisible(true);
-                    newGameButton.setVisible(false);
-                    showFinalImage.setVisible(false);
-                    emptyPanel2.setVisible(true);
-                    _puzzleGraphics.setVisible(false);
-                    timerPanel.setVisible(false);
-                    active = false;
-                }
-            }
             timerLabel.setText(String.format("Elapsed Time: %02d:%02d:%02d", minutes/60, minutes%60, seconds));
-            minutes = (int) (totalRemain / 60);
-            seconds = (int) (totalRemain % 60);
-//            if( minutes > 60 ) { Delete this block in future
-//                timeRemainLabel.setText("Time Left:  " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.");
-//            }
-//            else {
-//                timeRemainLabel.setText("Time Left:  " + minutes + " minutes, " + seconds + " seconds.");
-//            }
 	}
     }
 
@@ -443,7 +421,7 @@ class PuzzleGUI extends JPanel {
 	public void actionPerformed(ActionEvent e) {
 	    showFlag = false;
 	    showFinalImage.setText("Show Final Image");
-	    Main.setWindowSize(400,400);
+	    Main.setWindowSize(600,600);
 	    gameTypeLabel.setVisible(true);
             sizePanel.setVisible(true);
             difficultyPanel.setVisible(true);
@@ -491,7 +469,6 @@ class PuzzleGUI extends JPanel {
             timerLabel.setText("Elapsed Time: 00:00:00");
             timerPanel.setVisible(true);
             _puzzleGraphics.repaint();
-            active = true;
         }
     }
     // //////////////////////////////////////// inner class game size action
