@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -202,7 +203,7 @@ class PuzzleGUI extends JPanel {
         
         JLabel scoreLabel = new JLabel ("Hello World");
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 15;
         c.insets = new Insets(0, 0, 0, 0);
         scorePanel.add(scoreLabel);
         this.add(scorePanel);
@@ -364,6 +365,9 @@ class PuzzleGUI extends JPanel {
                 long totalTime = _puzzleCtrl.getTime();
                 long minutes = totalTime / 60;
                 long seconds = totalTime % 60;
+                DecimalFormat df = new DecimalFormat("#.##");
+                double score = 0.0;
+                score = (1.0/totalTime + 1.0/_puzzleCtrl.getMoves())*sizeSelection*1000;
                 String message = "Congratulations you have won.\nYou used " + _puzzleCtrl.getMoves() + " moves.";
                 if( minutes > 60 ) {
                     message = message + "\nYou used a total of " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.";
@@ -371,6 +375,7 @@ class PuzzleGUI extends JPanel {
                 else {
                     message = message + "\nYou used a total of " + minutes + " minutes, " + seconds + " seconds.";
                 }
+                message = message + "\nYour final score is " + df.format(score) + ".";
                 int reply = JOptionPane.showConfirmDialog(null, message, "CONGRATULATIONS!!!", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null);
                 if( reply == JOptionPane.OK_OPTION){
                     // The code bellow repeated like 4 times, maybe move to its own method?
