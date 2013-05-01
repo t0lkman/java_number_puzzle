@@ -3,13 +3,14 @@ package com.puzzle.main;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Scanner;
 import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
-
+import java.util.LinkedList;
+import javax.swing.BorderFactory;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -45,7 +46,8 @@ class PuzzleGUI extends JPanel {
     private JRadioButton architectures = new JRadioButton("Architecture", false);
     private JRadioButton cars = new JRadioButton("Cars", false);
     private JRadioButton cartoon = new JRadioButton("Cartoon", false);
-    private BufferedReader input;
+    private Scanner scanner;
+    private LinkedList<highScores> scores = new LinkedList<highScores>();
     // end instance variables
 
     // ====================================================== constructor
@@ -192,21 +194,37 @@ class PuzzleGUI extends JPanel {
 	//this.add(controlPanel, BorderLayout.NORTH);
 	this.add(_puzzleGraphics, c);
         _puzzleGraphics.setVisible(false);
-        
+        String scoreMessage = "  Name           Score           Time Used          Moves Used\n";
         try{
-            input = new BufferedReader(new FileReader("Scores.txt"));
-            
+            File file = new File("Scores.txt");
+            scanner = new Scanner(file);
+            while(scanner.hasNextLine()){
+                String tempName;
+                double tempScore;
+                long tempSeconds;
+                int tempMoves;
+                tempName = scanner.next();
+                tempScore = scanner.nextDouble();
+                tempSeconds = scanner.nextLong();
+                tempMoves = scanner.nextInt();
+                scores.add(new highScores(tempName, tempScore, tempSeconds, tempMoves));
+            }
         }
         catch(FileNotFoundException ex){
-            
+            JOptionPane.showMessageDialog(null, "I can't find the file.");
         }
         
-        JLabel scoreLabel = new JLabel ("Hello World");
+        JLabel scoreLabel = new JLabel(scoreMessage);
+        for(highScores hs: scores){
+            
+        }
+        scorePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         c.gridx = 0;
-        c.gridy = 15;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.gridy = 5;
+        c.gridwidth = 4;
+        c.insets = new Insets(25, 0, 0, 200);
         scorePanel.add(scoreLabel);
-        this.add(scorePanel);
+        this.add(scorePanel, c);
         
     }// end constructor
 
@@ -367,7 +385,7 @@ class PuzzleGUI extends JPanel {
                 long seconds = totalTime % 60;
                 DecimalFormat df = new DecimalFormat("#.##");
                 double score = 0.0;
-                score = (1.0/totalTime + 1.0/_puzzleCtrl.getMoves())*sizeSelection*1000;
+                score = (1.0/totalTime + 1.0/_puzzleCtrl.getMoves())*Math.pow(sizeSelection,2)*1000;
                 String message = "Congratulations you have won.\nYou used " + _puzzleCtrl.getMoves() + " moves.";
                 if( minutes > 60 ) {
                     message = message + "\nYou used a total of " + minutes/60 + " hour, " + minutes%60 + " minutes, " + seconds + " seconds.";
@@ -513,3 +531,33 @@ class PuzzleGUI extends JPanel {
 	}
     }
 }// end class PuzzleGUI
+
+class highScores{
+    String name;
+    double score;
+    long seconds;
+    int moves;
+    
+    public highScores(String n, double sc, long sec, int m){
+        name = n;
+        score = sc;
+        seconds = sec;
+        moves = m;
+    }
+    
+    public String returnName(){
+        return name;
+    }
+    
+    public double returnScore(){
+        return score;
+    }
+    
+    public long returnSeconds(){
+        return seconds;
+    }
+    
+    public int returnMoves(){
+        return moves;
+    }
+}// end class highScores
