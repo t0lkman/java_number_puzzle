@@ -9,7 +9,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -48,6 +50,7 @@ class PuzzleGUI extends JPanel {
     private JRadioButton cartoon = new JRadioButton("Cartoon", false);
     private Scanner scanner;
     private LinkedList<highScores> scores = new LinkedList<highScores>();
+    private JTable highScoreTable;
     // end instance variables
 
     // ====================================================== constructor
@@ -194,8 +197,7 @@ class PuzzleGUI extends JPanel {
 	//this.add(controlPanel, BorderLayout.NORTH);
 	this.add(_puzzleGraphics, c);
         _puzzleGraphics.setVisible(false);
-        String scoreMessage = "  Name           Score           Time Used          Moves Used\n";
-        try{
+        /*try{
             File file = new File("Scores.txt");
             scanner = new Scanner(file);
             while(scanner.hasNextLine()){
@@ -213,17 +215,49 @@ class PuzzleGUI extends JPanel {
         catch(FileNotFoundException ex){
             JOptionPane.showMessageDialog(null, "I can't find the file.");
         }
+        */
+        String[] names = {"Initials", "Score", "Time", "Moves"};
+        Vector colNames = new Vector();
+        colNames.addAll(Arrays.asList(names));
         
-        JLabel scoreLabel = new JLabel(scoreMessage);
+        Vector rows = new Vector();
         for(highScores hs: scores){
-            
+            Vector aRow = new Vector();
+            aRow.add(new String(hs.getName()));
+            aRow.add(new Double(hs.getScore()));
+            String tempTime = "";
+            long tempSec;
+            long tempMin;
+            long tempHr;
+            tempSec = hs.getSeconds()%60;
+            tempMin = (hs.getSeconds()/60)%60;
+            tempHr = hs.getSeconds()/3600;
+            if(tempHr > 0){
+                if(tempHr == 1){
+                    tempTime = tempHr + " hour, ";
+                }
+                else tempTime = tempHr + " hours, ";
+            }
+            if(tempMin == 1){
+                tempTime += tempMin + " minute, ";
+            }
+            else tempTime += tempMin + " minutes, ";
+            if(tempSec == 1){
+                tempTime += tempSec + " second";
+            }
+            else tempTime += tempSec + " seconds";
+            aRow.add(new String(tempTime));
+            aRow.add(new Integer(hs.getMoves()));
+            rows.add(aRow);
         }
+        highScoreTable = new JTable(rows, colNames);
         scorePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         c.gridx = 0;
         c.gridy = 5;
-        c.gridwidth = 4;
-        c.insets = new Insets(25, 0, 0, 200);
-        scorePanel.add(scoreLabel);
+        c.gridwidth = 0;
+        c.gridheight = 3;
+        c.insets = new Insets(0, 0, 0, 0);
+        scorePanel.add(highScoreTable);
         this.add(scorePanel, c);
         
     }// end constructor
@@ -455,6 +489,7 @@ class PuzzleGUI extends JPanel {
             emptyPanel2.setVisible(true);
             _puzzleGraphics.setVisible(false);
             timerPanel.setVisible(false);
+            scorePanel.setVisible(true);
 	}
     }// end inner class NewGameAction
 
@@ -491,6 +526,7 @@ class PuzzleGUI extends JPanel {
             moveLabel.setText("Moves:  " + _puzzleCtrl.getMoves());
             timerLabel.setText("Elapsed Time: 00:00:00");
             timerPanel.setVisible(true);
+            scorePanel.setVisible(false);
             _puzzleGraphics.repaint();
         }
     }
@@ -545,19 +581,19 @@ class highScores{
         moves = m;
     }
     
-    public String returnName(){
+    public String getName(){
         return name;
     }
     
-    public double returnScore(){
+    public double getScore(){
         return score;
     }
     
-    public long returnSeconds(){
+    public long getSeconds(){
         return seconds;
     }
     
-    public int returnMoves(){
+    public int getMoves(){
         return moves;
     }
 }// end class highScores
