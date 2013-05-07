@@ -6,8 +6,11 @@ import java.awt.image.BufferedImage;
 import java.util.Scanner;
 import java.io.File;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -491,7 +494,7 @@ class PuzzleGUI extends JPanel {
 	public void actionPerformed(ActionEvent e) {
 	    showFlag = false;
 	    showFinalImage.setText("Show Final Image");
-	    Main.setWindowSize(600,600);
+	    Main.setWindowSize(600,300);
 	    gameTypeLabel.setVisible(true);
             sizePanel.setVisible(true);
             difficultyPanel.setVisible(true);
@@ -547,26 +550,46 @@ class PuzzleGUI extends JPanel {
     }
 
     public class HelpButtonAction implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (Desktop.isDesktopSupported()) {
-        	    try {
-        		URL location = PuzzleGUI.class.getResource("docs/manual.pdf");
-        	        File myFile = new File(location.getPath());
-        	        Desktop.getDesktop().open(myFile);
-        	        
-        	    } catch (IOException ex) {
-        	        // no application registered for PDFs
-        		JOptionPane.showMessageDialog(null, "Adobe Reader is not found!");
-        	    }
-        	    catch (NullPointerException ex) {
-        	        // File not Found
-        		JOptionPane.showMessageDialog(null, "No User Manual is Found!");
-        	    }	    
-            }
-            
-        }
+	public void actionPerformed(ActionEvent e) {
+	    if (Desktop.isDesktopSupported()) {
+		try {
+		    File file = null;
+		    String resource = "docs/manual.pdf";
+		    URL res = getClass().getResource(resource);
+		    if (res.toString().startsWith("jar:")) {
+			InputStream input = getClass().getResourceAsStream(resource);
+			file = File.createTempFile("manual", ".pdf");
+			OutputStream out = new FileOutputStream(file);
+			int read;
+			byte[] bytes = new byte[1024];
+
+			while ((read = input.read(bytes)) != -1) {
+			    out.write(bytes, 0, read);
+			}
+			file.deleteOnExit();
+		    } else {
+			// this will probably work in your IDE, but not from a
+			// JAR
+			file = new File(res.getFile());
+		    }
+
+		    if (file != null && !file.exists()) {
+			throw new IOException("Error: File " + file + " not found!");
+		    }
+		    Desktop.getDesktop().open(file);
+
+		} catch (IOException ex) {
+		    // no application registered for PDFs
+		    JOptionPane.showMessageDialog(null, "Adobe Reader is not found!");
+		} catch (NullPointerException ex) {
+		    // File not Found
+		    JOptionPane.showMessageDialog(null, "No User Manual is Found!");
+		}
+	    }
+
+	}
     }
-    
+
     // //////////////////////////////////////// inner class game size action
     // listener
     public class SizeAction implements ActionListener {
