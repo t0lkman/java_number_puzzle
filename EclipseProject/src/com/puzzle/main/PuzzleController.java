@@ -35,40 +35,12 @@ class PuzzleController {
     public void reset(int d) {
         moves = 0;
         setWatch();
-        //images arrangement
-        if(d == 2){
+        //images/numbers arrangement
+        if(d == 2 || d == 1){
             for (int r=0; r<ROWS; r++) {
                 for (int c=0; c<COLS; c++) {
                     _contents[r][c] = new Tile(r, c, "" + (r*COLS+c));
                 }
-            }
-        }
-        //numbers arrangement
-        else if(d == 1){
-            int[] numbers = new int[ROWS * COLS - 1];
-            boolean check = true;
-            Random randomGenerator = new Random();
-            //method to fill board with sorted random numbers from 1 to 99, and ensure there are no duplicates
-            for(int t = 0; t < (ROWS * COLS) - 1; t++ ){
-                int tempRandom = randomGenerator.nextInt(99) + 1;
-                if(t > 0){
-                    do{
-                        check = true;
-                        for(int i = 0; i < numbers.length; i++){
-                            if(tempRandom == numbers[i]){
-                                check = false;
-                            }
-                        }
-                        if(!check) {
-                            tempRandom = randomGenerator.nextInt(99) + 1;
-                        }
-                    } while(!check); 
-                }
-                numbers[t] = tempRandom;
-            }
-            Arrays.sort(numbers);
-            for(int t = 0; t < numbers.length; t++){
-                _contents[t/ROWS][t%COLS] = new Tile(t/ROWS, t%COLS, "" + numbers[t]);
             }
         }
         //--- Set last tile face to null to mark empty space

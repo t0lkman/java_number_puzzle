@@ -11,7 +11,7 @@ class Main {
         window.setContentPane(new PuzzleGUI());
         Main.setWindowSize(600,600);
         window.setVisible(true);
-        window.setResizable(false);
+        window.setResizable(true);
     }
     public static void setWindowSize(int x, int y){
 	Main.window.setSize(x, y);

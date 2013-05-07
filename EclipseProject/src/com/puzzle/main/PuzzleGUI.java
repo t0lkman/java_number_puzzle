@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ class PuzzleGUI extends JPanel {
     protected JButton showFinalImage = new JButton("Show Final Image");
     protected boolean showFlag = false;
     private JButton startButton = new JButton("Start Game");
+    private JButton helpButton = new JButton("How to Play");
     private int sizeSelection = 3;
     private int typSelection = 1; // 1 = Numbers, 2 = Images
     private int imageTypeSelection = 1; // 1 = dogs, 2 = architectures, 3 = cars, 4 = cartoon
@@ -59,6 +61,7 @@ class PuzzleGUI extends JPanel {
 	
         newGameButton.addActionListener(new NewGameAction());
         startButton.addActionListener(new StartButtonAction());
+        helpButton.addActionListener(new HelpButtonAction());
         showFinalImage.addActionListener(new ShowFinalImageButtonAction());
 	JRadioButton _3x3 = new JRadioButton("3 x 3", true);
 	JRadioButton _4x4 = new JRadioButton("4 x 4", false);
@@ -180,9 +183,18 @@ class PuzzleGUI extends JPanel {
         c.ipadx = 0;
         c.gridheight = 1;
         c.gridy = 4;
-        c.insets = new Insets(25, 230, 0, 100);
+        c.insets = new Insets(25, 140, 0, 140);
         c.gridwidth = 2;
         this.add(startButton, c);
+        
+        c.gridx = 1;
+        c.ipady = 20;
+        c.ipadx = 0;
+        c.gridheight = 1;
+        c.gridy = 4;
+        c.insets = new Insets(25, 55, 0, 160);
+        c.gridwidth = 2;
+        this.add(helpButton, c);
         
 	// --- Create graphics panel
 	_puzzleGraphics = new GraphicsPanel();
@@ -438,6 +450,7 @@ class PuzzleGUI extends JPanel {
                     sizePanel.setVisible(true);
                     difficultyPanel.setVisible(true);
                     startButton.setVisible(true);
+                    helpButton.setVisible(true);
                     picturePanel.setVisible(true);
                     newGameButton.setVisible(false);
                     showFinalImage.setVisible(false);
@@ -483,6 +496,7 @@ class PuzzleGUI extends JPanel {
             sizePanel.setVisible(true);
             difficultyPanel.setVisible(true);
             startButton.setVisible(true);
+            helpButton.setVisible(true);
             picturePanel.setVisible(true);
             newGameButton.setVisible(false);
             showFinalImage.setVisible(false);
@@ -508,6 +522,7 @@ class PuzzleGUI extends JPanel {
             sizePanel.setVisible(false);
             difficultyPanel.setVisible(false);
             startButton.setVisible(false);
+            helpButton.setVisible(false);
             newGameButton.setVisible(true);
             if(typSelection==1){
                showFinalImage.setVisible(false);
@@ -530,6 +545,28 @@ class PuzzleGUI extends JPanel {
             _puzzleGraphics.repaint();
         }
     }
+
+    public class HelpButtonAction implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (Desktop.isDesktopSupported()) {
+        	    try {
+        		URL location = PuzzleGUI.class.getResource("docs/manual.pdf");
+        	        File myFile = new File(location.getPath());
+        	        Desktop.getDesktop().open(myFile);
+        	        
+        	    } catch (IOException ex) {
+        	        // no application registered for PDFs
+        		JOptionPane.showMessageDialog(null, "Adobe Reader is not found!");
+        	    }
+        	    catch (NullPointerException ex) {
+        	        // File not Found
+        		JOptionPane.showMessageDialog(null, "No User Manual is Found!");
+        	    }	    
+            }
+            
+        }
+    }
+    
     // //////////////////////////////////////// inner class game size action
     // listener
     public class SizeAction implements ActionListener {

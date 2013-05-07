@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/* 
+ *  We need read more about jUnit
+ */
+
 public class PuzzleControllerTest {
 
 	@Test
