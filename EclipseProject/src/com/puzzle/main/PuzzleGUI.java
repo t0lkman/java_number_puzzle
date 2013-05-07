@@ -125,7 +125,7 @@ class PuzzleGUI extends JPanel {
         c.ipady = 0;
         c.gridx = 0;
         c.gridy = 0;
-        c.insets = new Insets(0, 226, 25, 0);
+        c.insets = new Insets(0, 246, 25, 0);
         c.gridwidth = 3;
         gameTypeLabel.setFont(new Font(gameTypeLabel.getFont().getName(),Font.BOLD,gameTypeLabel.getFont().getSize()));
         this.add(gameTypeLabel, c);
@@ -263,7 +263,7 @@ class PuzzleGUI extends JPanel {
             rows.add(aRow);
         }
         highScoreTable = new JTable(rows, colNames);
-        scorePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+      //  scorePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         c.gridx = 0;
         c.gridy = 5;
         c.gridwidth = 0;
