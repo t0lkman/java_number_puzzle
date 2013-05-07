@@ -12,6 +12,6 @@ https://github.com/t0lkman/java_number_puzzle/blob/master/EclipseProject/src/com
 Screen Shots
 ==================
 
-![Alt text](https://github.com/t0lkman/java_number_puzzle/blob/master/screenshots/first_screen.jpg "Start Game")
+![Start Game](https://github.com/t0lkman/java_number_puzzle/blob/master/screenshots/first_screen.jpg)
 
-![Alt text](https://github.com/t0lkman/java_number_puzzle/blob/master/screenshots/first_screen.jpg "Image Version GamePlay")
+![Image Version GamePlay](https://github.com/t0lkman/java_number_puzzle/blob/master/screenshots/first_screen.jpg)
