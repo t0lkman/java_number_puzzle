@@ -3,11 +3,8 @@ java_number_puzzle
 
 Number Puzzle Game
 
+![Check the User Manual](https://github.com/t0lkman/java_number_puzzle/raw/master/EclipseProject/src/com/puzzle/main/docs/manual.pdf)
 
-Check the User Manual:
-
-
-https://github.com/t0lkman/java_number_puzzle/blob/master/EclipseProject/src/com/puzzle/main/docs/manual.pdf
 
 Screen Shots
 ==================
