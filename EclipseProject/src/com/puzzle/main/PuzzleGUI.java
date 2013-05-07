@@ -526,11 +526,11 @@ class PuzzleGUI extends JPanel {
             newGameButton.setVisible(true);
             if(typSelection==1){
                showFinalImage.setVisible(false);
-               Main.setWindowSize(500,550);
+               Main.setWindowSize(520,550);
             }
             else if(typSelection==2){
                 showFinalImage.setVisible(true);
-                Main.setWindowSize(500,600);
+                Main.setWindowSize(520,600);
              }            
             picturePanel.setVisible(false);
             emptyPanel2.setVisible(false);
